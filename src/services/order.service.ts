@@ -1,20 +1,43 @@
-import { apiClient } from '../middleware/axios.interceptor';
-import { ENDPOINTS } from '../config/api.config';
-import type { OrderDTO, OrderDetailDTO, CreateOrderRequest } from '../types/order.types';
+import api from '../middleware/axios.interceptor';
 
-export const orderService = {
-  getAll: () =>
-    apiClient.get<OrderDTO[]>(ENDPOINTS.orders).then(r => r.data),
+export interface OrderDTO {
+  id: number;
+  orderDate: string;
+  totalAmount: number;
+  status: string;
+}
 
-  getById: (id: string) =>
-    apiClient.get<OrderDetailDTO>(`${ENDPOINTS.orders}/${id}`).then(r => r.data),
+export interface OrderDetailDTO extends OrderDTO {
+  items: {
+    id: number;
+    productId: number;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+  }[];
+}
 
-  create: (payload: CreateOrderRequest) =>
-    apiClient.post<OrderDTO>(ENDPOINTS.orders, payload).then(r => r.data),
+export interface OrderStatusDTO {
+  orderId: number;
+  status: string;
+}
 
-  cancel: (id: string) =>
-    apiClient.patch<OrderDTO>(`${ENDPOINTS.orders}/${id}/cancel`).then(r => r.data),
+const orderService = {
+  // GET /api/orders/user/:userId  → List<OrderDTO>
+  getUserOrders: (userId: number) =>
+    api.get<OrderDTO[]>(`/orders/user/${userId}`),
 
-  updateStatus: (id: string, status: string) =>
-    apiClient.patch(`${ENDPOINTS.orders}/${id}/status`, { status }).then(r => r.data),
+  // GET /api/orders/:orderId  → OrderDetailDTO
+  getById: (orderId: number) =>
+    api.get<OrderDetailDTO>(`/orders/${orderId}`),
+
+  // POST /api/orders/checkout/:userId  → OrderDTO
+  checkout: (userId: number) =>
+    api.post<OrderDTO>(`/orders/checkout/${userId}`),
+
+  // PUT /api/orders/status  body: { orderId, status }
+  updateStatus: (dto: OrderStatusDTO) =>
+    api.put('/orders/status', dto),
 };
+
+export default orderService;

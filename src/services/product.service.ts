@@ -1,40 +1,45 @@
-import { apiClient } from '../middleware/axios.interceptor';
-import { ENDPOINTS } from '../config/api.config';
-import type {
-  ProductDTO,
-  ProductPageDTO,
-  CategoryDTO,
-  ProductFilterParams,
-} from '../types/product.types';
+import api from '../middleware/axios.interceptor';
 
-export const productService = {
-  // GET /catalog/products?page=0&size=12&categoryId=...
-  getAll: (params?: ProductFilterParams) =>
-    apiClient
-      .get<ProductPageDTO>(ENDPOINTS.products, { params })
-      .then((r) => r.data),
+export interface ProductDTO {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stockQuantity: number;
+  categoryId: number;
+  categoryName: string;
+  imageUrl?: string;
+}
 
-  // GET /catalog/products/:id
-  getById: (id: string) =>
-    apiClient
-      .get<ProductDTO>(`${ENDPOINTS.products}/${id}`)
-      .then((r) => r.data),
+export interface ProductDetailDTO extends ProductDTO {
+  // champs supplémentaires si le backend les renvoie
+}
 
-  // GET /catalog/products?categoryId=:id  (raccourci sémantique)
-  getByCategory: (categoryId: string, params?: Omit<ProductFilterParams, 'categoryId'>) =>
-    apiClient
-      .get<ProductPageDTO>(ENDPOINTS.products, { params: { ...params, categoryId } })
-      .then((r) => r.data),
+export interface ProductFilterDTO {
+  name?: string;
+  categoryId?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  page?: number;
+  size?: number;
+}
 
-  // GET /catalog/categories
-  getAllCategories: () =>
-    apiClient
-      .get<CategoryDTO[]>(ENDPOINTS.categories)
-      .then((r) => r.data),
+const productService = {
+  // GET /api/products  → List<ProductDTO>
+  getAll: () =>
+    api.get<ProductDTO[]>('/products'),
 
-  // GET /catalog/categories/:id
-  getCategoryById: (id: string) =>
-    apiClient
-      .get<CategoryDTO>(`${ENDPOINTS.categories}/${id}`)
-      .then((r) => r.data),
+  // GET /api/products/:id  → ProductDetailDTO
+  getById: (id: number) =>
+    api.get<ProductDetailDTO>(`/products/${id}`),
+
+  // GET /api/products/search?name=...&categoryId=...&minPrice=...&maxPrice=...
+  search: (params: ProductFilterDTO) =>
+    api.get<ProductDTO[]>('/products/search', { params }),
+
+  // Raccourci recherche par nom (compatibilité avec l'ancien code)
+  searchByName: (name: string) =>
+    api.get<ProductDTO[]>('/products/search', { params: { name } }),
 };
+
+export default productService;

@@ -1,23 +1,22 @@
-// src/store/authStore.ts  ← CE FICHIER MANQUE
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface AuthStore {
+interface AuthState {
   token: string | null;
-  user: { id: string; email: string; role: string } | null;
+  user: { id: number; email: string; role: string } | null;
   setToken: (token: string) => void;
-  setUser: (user: AuthStore['user']) => void;
+  setUser: (user: AuthState['user']) => void;
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthStore>()(
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       token: null,
-      user: null,
+      user:  null,
       setToken: (token) => set({ token }),
-      setUser: (user) => set({ user }),
-      logout: () => set({ token: null, user: null }),
+      setUser:  (user)  => set({ user }),
+      logout:   ()      => set({ token: null, user: null }),
     }),
     { name: 'auth-storage' }
   )
