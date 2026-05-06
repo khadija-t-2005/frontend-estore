@@ -155,24 +155,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         </div>
 
         {/* Prix + CTA */}
-        <div className="mt-auto flex items-center justify-between gap-3">
-          <div>
-            <span className="text-lg font-black" style={{ color: style.accent }}>
-              {product.price.toLocaleString('fr-MA')}
-            </span>
-            <span className="text-sm text-gray-400 ml-1">DH</span>
-          </div>
+        {/* Prix + CTA */}
+<div className="mt-auto flex items-center justify-between gap-3">
+  <div>
+    <span className="text-lg font-black" style={{ color: style.accent }}>
+      {product.price.toLocaleString('fr-MA')}
+    </span>
+    <span className="text-sm text-gray-400 ml-1">DH</span>
+  </div>
 
-          <button
-            onClick={handleAdd}
-            disabled={stock === 0 || adding}
-            className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
-            style={{ backgroundColor: adding ? style.accent : '#1a2f38' }}
-          >
-            <ShoppingCart size={13} />
-            {adding ? 'Ajouté ✓' : 'Ajouter'}
-          </button>
-        </div>
+  {/* ✅ Redirige vers la page détail au lieu d'ajouter au panier */}
+  <Link
+    to={`/products/${product.id}`}
+    onClick={(e) => e.stopPropagation()}
+    className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition-all active:scale-95"
+    style={{ backgroundColor: '#1a2f38' }}
+  >
+    <ShoppingCart size={13} />
+    Ajouter
+  </Link>
+</div>
       </div>
     </Link>
   );

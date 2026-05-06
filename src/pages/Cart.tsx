@@ -80,19 +80,24 @@ export default function Cart() {
       clearCart();
     } catch { setError("Erreur lors du vidage du panier"); }
   };
-
+  //HNA
   const handleCheckout = async () => {
-    if (!user) return;
-    setChecking(true); setError('');
-    try {
-      await orderService.checkout(Number(user.id));
-      clearCart();
-      setSuccess('Commande passée avec succès ! Merci pour votre achat.');
-    } catch (err: any) {
-      setError(err.message || 'Erreur lors de la commande');
-    } finally { setChecking(false); }
+  if (!user) return;
+  setChecking(true);
+  setError('');
+  try {
+    await orderService.checkout(Number(user.id));
+    await cartService.clearCart(Number(user.id));
+    clearCart();
+    setSuccess('Commande passée avec succès !');
+    setTimeout(() => navigate('/products'), 2000); // ✅ redirige après 2s
+  } catch (err: any) {
+    setError(err.message || 'Erreur');
+  } finally {
+    setChecking(false);
+  }
   };
-
+// hna sala 
   const items = cart?.items ?? [];
   const total = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 

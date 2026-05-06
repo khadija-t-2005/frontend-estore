@@ -40,6 +40,8 @@ export default function ProductDetail() {
       const res = await productService.getById(Number(id));
       return res.data;
     },
+    staleTime: 0,        // ✅
+    refetchOnMount: true // ✅
   });
 
   // ── Variants ──
@@ -49,6 +51,8 @@ export default function ProductDetail() {
       const res = await variantService.getVariants(Number(id));
       return res.data;
     },
+    staleTime: 0,        // ✅
+    refetchOnMount: true // ✅
   });
 
   // Sélectionne le premier variant automatiquement

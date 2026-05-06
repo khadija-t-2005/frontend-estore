@@ -7,9 +7,9 @@ export interface CartItemDTO {
   productName: string;
   quantity: number;
   unitPrice: number;
-  variantId?: number;        // optionnel
-  variantColor?: string;     // optionnel
-  variantImageUrl?: string;  // optionnel
+  variantId?: number;
+  variantColor?: string;
+  variantImageUrl?: string;
 }
 
 export interface CartDTO {
@@ -20,7 +20,7 @@ export interface CartDTO {
 
 interface CartStore {
   cart: CartDTO | null;
-  setCart: (cart: CartDTO) => void;
+  setCart: (cart: CartDTO | null) => void;
   clearCart: () => void;
   itemCount: () => number;
 }
@@ -30,7 +30,10 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       cart: null,
       setCart: (cart) => set({ cart }),
-      clearCart: () => set({ cart: null }),
+      clearCart: () => {
+        set({ cart: null });
+        localStorage.removeItem('cart-storage'); // ✅ vide aussi le localStorage
+      },
       itemCount: () =>
         get().cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0,
     }),
