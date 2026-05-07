@@ -1,6 +1,6 @@
 // Navbar.tsx
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
@@ -151,6 +151,12 @@ const Navbar: React.FC = () => {
                     <div className="bg-gradient-to-r from-[#1a2f38]/5 to-[#4a9aaa]/5 px-5 py-4 border-b border-gray-100">
                       <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Connecté en tant que</p>
                       <p className="text-sm font-bold text-[#1a2f38] mt-1 truncate">{user.email}</p>
+                      {/* 🆕 Badge admin si l'utilisateur est admin */}
+                      {user.role === 'ADMIN' && (
+                        <div className="mt-2 inline-block bg-[#4a9aaa] text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                          Administrateur
+                        </div>
+                      )}
                     </div>
 
                     {/* Menu items */}
@@ -176,6 +182,21 @@ const Navbar: React.FC = () => {
                           </span>
                         )}
                       </Link>
+
+                      {/* 🆕 Lien Admin Dashboard (visible seulement pour les admins) */}
+                      {user.role === 'ADMIN' && (
+                        <>
+                          <div className="border-t border-gray-100 my-2" />
+                          <Link
+                            to="/admin"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-5 py-3 hover:bg-[#1a2f38]/5 transition text-[#1a2f38] text-sm font-semibold"
+                          >
+                            <LayoutDashboard size={16} className="text-[#4a9aaa]" />
+                            <span>Tableau de bord admin</span>
+                          </Link>
+                        </>
+                      )}
                     </div>
 
                     {/* Divider */}
@@ -259,6 +280,18 @@ const Navbar: React.FC = () => {
                 >
                   <User size={16} /> Mon profil
                 </Link>
+
+                {/* 🆕 Lien Admin Dashboard mobile (visible seulement pour les admins) */}
+                {user.role === 'ADMIN' && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2 text-sm font-semibold text-[#4a9aaa] hover:text-[#2a7a8a] py-2"
+                  >
+                    <LayoutDashboard size={16} /> Tableau de bord
+                  </Link>
+                )}
+
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 py-2"

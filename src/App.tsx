@@ -8,6 +8,7 @@ import ProductDetail from './pages/ProductDetail';
 import Cart          from './pages/Cart';
 import Login         from './pages/Login';
 import Register      from './pages/Register';
+import AdminDashboard from './pages/AdminDashboard';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,12 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return token ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
+// ── Route admin : redirige vers / si pas admin
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const user = useAuthStore((s) => s.user);
+  return user?.role === 'ADMIN' ? <>{children}</> : <Navigate to="/" replace />;
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,9 +43,14 @@ export default function App() {
           <Route path="/login"     element={<Login />} />
           <Route path="/register"  element={<Register />} />
 
-          {/* Routes protégées */}
+          {/* Routes protégées (authentifiées) */}
           <Route path="/cart" element={
             <PrivateRoute><Cart /></PrivateRoute>
+          } />
+
+          {/* Route admin (authentifiée + rôle ADMIN) */}
+          <Route path="/admin" element={
+            <AdminRoute><AdminDashboard /></AdminRoute>
           } />
 
           {/* Fallback */}
